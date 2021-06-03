@@ -21,15 +21,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -114,32 +105,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildRow(int index, String title) {
     return Dismissible(
-      key: Key("$index"),
-      background: Container(color: Colors.red),
-      // start to endの背景
-      secondaryBackground: Container(color: Colors.yellow),
-      // end to startの背景
-      onDismissed: (direction) {
-        print("deleted $index $direction $lists");
+        key: Key("$index"),
+        background: Container(color: Colors.red),
+        // start to endの背景
+        secondaryBackground: Container(color: Colors.yellow),
+        // end to startの背景
+        onDismissed: (direction) {
+          print("deleted $index $direction $lists");
 
-        setState(() {
-          lists.removeAt(index);
-          // lists.remove(title);
-        });
+          setState(() {
+            lists.removeAt(index);
+            // lists.remove(title);
+          });
 
-        print("remove at $index, $lists");
-        if (direction == DismissDirection.endToStart) {
-          print("end to start"); // (日本語だと)右から左のとき
-        } else {
-          print("start to end"); // (日本語だと?)左から右のとき
-        }
-      },
-      child: ListTile(
-        title: Text(title),
-        onTap: () {
-          print("row clicked");
+          print("remove at $index, $lists");
+          if (direction == DismissDirection.endToStart) {
+            print("end to start"); // (日本語だと)右から左のとき
+          } else {
+            print("start to end"); // (日本語だと?)左から右のとき
+          }
         },
-      ),
-    );
+        child:
+    // Container(
+    //         height: 32,
+    //         margin: EdgeInsets.only(left: 24, right: 24, top: 4, bottom: 4),
+    //         child:
+
+            // Row(
+            //     children: [
+            //       Icon(Icons.check_box_outline_blank),
+            //       Text(
+            //         title,
+            //         style: TextStyle(fontSize: 20),
+            //       )
+            //     ]))
+        ListTile(
+          title: Text(title),
+          onTap: () {
+            print("row clicked");
+          },
+          // trailing: Icon(Icons.check_box_outline_blank),
+          leading: ConstrainedBox(
+              constraints: BoxConstraints(
+                  minHeight: 44,
+                  minWidth: 34,
+                  maxHeight: 64,
+                  maxWidth: 54),
+              child: Icon(Icons.check_box_outline_blank)),
+        ),
+        );
   }
 }

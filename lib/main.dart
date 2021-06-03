@@ -104,62 +104,55 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildRow(int index, String title) {
-    TextEditingController _textEditingController = TextEditingController(text: title);
+    TextEditingController _textEditingController =
+        TextEditingController(text: title);
     bool editing = false;
 
     return Dismissible(
-        key: Key("$index"),
-        background: Container(color: Colors.red),
-        // start to endの背景
-        secondaryBackground: Container(color: Colors.yellow),
-        // end to startの背景
-        onDismissed: (direction) {
-          print("deleted $index $direction $lists");
+      key: Key("$index"),
+      background: Container(color: Colors.red),
+      // start to endの背景
+      secondaryBackground: Container(color: Colors.yellow),
+      // end to startの背景
+      onDismissed: (direction) {
+        print("deleted $index $direction $lists");
 
+        setState(() {
+          lists.removeAt(index);
+          // lists.remove(title);
+        });
+
+        print("remove at $index, $lists");
+        if (direction == DismissDirection.endToStart) {
+          print("end to start"); // (日本語だと)右から左のとき
+        } else {
+          print("start to end"); // (日本語だと?)左から右のとき
+        }
+      },
+      child: ListTile(
+        title: Text("$title"),
+        // editing
+        //     ? TextField(controller: _textEditingController, onChanged: null)
+        //     : Text("$title"),
+        onTap: () {
+          print("row clicked");
           setState(() {
-            lists.removeAt(index);
-            // lists.remove(title);
+            editing = true;
           });
-
-          print("remove at $index, $lists");
-          if (direction == DismissDirection.endToStart) {
-            print("end to start"); // (日本語だと)右から左のとき
-          } else {
-            print("start to end"); // (日本語だと?)左から右のとき
-          }
         },
-        child:
-    // Container(
-    //         height: 32,
-    //         margin: EdgeInsets.only(left: 24, right: 24, top: 4, bottom: 4),
-    //         child:
+        // trailing: Icon(Icons.check_box_outline_blank),
+        leading: ConstrainedBox(
+            constraints: BoxConstraints(
+                minHeight: 44, minWidth: 34, maxHeight: 64, maxWidth: 54),
+            child: Icon(Icons.check_box_outline_blank)),
+      ),
+    );
 
-            // Row(
-            //     children: [
-            //       Icon(Icons.check_box_outline_blank),
-            //       Text(
-            //         title,
-            //         style: TextStyle(fontSize: 20),
-            //       )
-            //     ]))
-        ListTile(
 
-          title: editing ? TextField(controller: _textEditingController, onChanged: null) : Text("$title"),
-          onTap: () {
-            print("row clicked");
-            setState(() {
-              editing = true;
-            });
-          },
-          // trailing: Icon(Icons.check_box_outline_blank),
-          leading: ConstrainedBox(
-              constraints: BoxConstraints(
-                  minHeight: 44,
-                  minWidth: 34,
-                  maxHeight: 64,
-                  maxWidth: 54),
-              child: Icon(Icons.check_box_outline_blank)),
-        ),
-        );
+    Widget titleWidget() {
+      if (editing){ return TextField(controller: _textEditingController, onChanged: null); }
+      else { return Text("$title"); }
+    }
+
   }
 }

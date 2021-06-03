@@ -104,6 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildRow(int index, String title) {
+    TextEditingController _textEditingController = TextEditingController(text: title);
+    bool editing = false;
+
     return Dismissible(
         key: Key("$index"),
         background: Container(color: Colors.red),
@@ -140,9 +143,13 @@ class _MyHomePageState extends State<MyHomePage> {
             //       )
             //     ]))
         ListTile(
-          title: Text(title),
+
+          title: editing ? TextField(controller: _textEditingController, onChanged: null) : Text("$title"),
           onTap: () {
             print("row clicked");
+            setState(() {
+              editing = true;
+            });
           },
           // trailing: Icon(Icons.check_box_outline_blank),
           leading: ConstrainedBox(

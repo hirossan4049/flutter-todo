@@ -39,7 +39,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _text = "";
+  var _controller = TextEditingController();
+  var listViewKey = Key("listView");
   List<Color> colorList = [Colors.cyan, Colors.deepOrange, Colors.indigo];
+  List<String> lists = ["hello", "world", "hey"];
 
   void _incrementCounter() {
     setState(() {
@@ -50,6 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleText(String e) {
     setState(() {
       _text = e;
+    });
+  }
+
+  void add() {
+    setState(() {
+      // lists.add(_text);
+      lists.insert(0, _text);
+      _controller.clear();
     });
   }
 
@@ -71,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Flexible(
                       child: TextField(
+                    controller: _controller,
                     onChanged: _handleText,
                   )),
                   RaisedButton(
@@ -78,50 +90,56 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       color: Colors.white,
                       shape: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
                       ),
-                      onPressed: () {}),
+                      onPressed: add),
                   // HomeWidget()
                 ],
               ),
             ),
             Flexible(
               child: ListView.builder(
+                  key: listViewKey,
                   itemBuilder: (BuildContext context, int index) {
-                return Text(index.toString() * 2333);
-              }),
-              //     ListView(
-              //   children: <Widget>[
-              //     Text('Item 1'),
-              //     Text('Item 2'),
-              //     Text('Item 3'),
-              //   ],
-              // )
+                    // return Text(lists[index]);
+                    return _buildRow(index, lists[index]);
+                  },
+                  itemCount: lists.length),
             )
           ],
         ),
       ),
     );
   }
-}
 
-class HomeWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return ListState();
-  }
-}
+  Widget _buildRow(int index, String title) {
+    return Dismissible(
+      key: Key("$index"),
+      background: Container(color: Colors.red),
+      // start to endの背景
+      secondaryBackground: Container(color: Colors.yellow),
+      // end to startの背景
+      onDismissed: (direction) {
+        print("deleted $index $direction $lists");
 
-class ListState extends State<HomeWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("List Test"),
+        setState(() {
+          lists.removeAt(index);
+          // lists.remove(title);
+        });
+
+        print("remove at $index, $lists");
+        if (direction == DismissDirection.endToStart) {
+          print("end to start"); // (日本語だと)右から左のとき
+        } else {
+          print("start to end"); // (日本語だと?)左から右のとき
+        }
+      },
+      child: ListTile(
+        title: Text(title),
+        onTap: () {
+          print("row clicked");
+        },
       ),
-      body: ListView.builder(itemBuilder: (BuildContext context, int index) {
-        return Text(index.toString());
-      }),
     );
   }
 }

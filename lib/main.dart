@@ -30,8 +30,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _text = "";
+  String _updateText = "";
   var _controller = TextEditingController();
-  var listViewKey = Key("listView");
+  var _updateTextController = TextEditingController();
   List<String> lists = ["hello", "world", "hey"];
 
   void _incrementCounter() {
@@ -46,12 +47,53 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _handleUpdateText(String e) {
+    setState(() {
+      _updateText = e;
+    });
+  }
+
   void add() {
     setState(() {
       // lists.add(_text);
       lists.insert(0, _text);
       _controller.clear();
     });
+  }
+
+  void update(int index, String text) {
+    setState(() {
+      lists[index] = text;
+    });
+  }
+
+  void edit(int index, String title) {
+    print("!!!!!!!!!!!!!!!!! $title");
+    setState(() {
+      _updateTextController.text = title;
+    });
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text("編集"),
+          content: TextField(controller: _updateTextController, onChanged: _handleUpdateText),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            FlatButton(
+              child: Text("更新"),
+              onPressed: () {
+                update(index, _updateText);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -91,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Flexible(
               child: ListView.builder(
-                  key: listViewKey,
+                  key: UniqueKey(),
                   itemBuilder: (BuildContext context, int index) {
                     // return Text(lists[index]);
                     return _buildRow(index, lists[index]);
@@ -111,10 +153,32 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Dismissible(
       key: UniqueKey(),
-      background: Container(color: Colors.red),
+      background: Container(
+        color: Colors.blue,
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10.0, 0.0, 20.0, 0.0),
+          child: Icon(Icons.edit, color: Colors.white),
+        ),
+      ),
       // start to endの背景
-      secondaryBackground: Container(color: Colors.yellow),
-      // end to startの背景
+      secondaryBackground: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10.0, 0.0, 20.0, 0.0),
+          child: Icon(Icons.delete_outline_rounded, color: Colors.white),
+        ),
+      ),
+
+      confirmDismiss: (DismissDirection direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          edit(index, title);
+          return false;
+        }else {
+          return true;
+        }
+      },
       onDismissed: (direction) {
         print("deleted $index $direction $lists");
 
@@ -141,26 +205,8 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
 
-        onLongPress: (){
-          showDialog(
-            context: context,
-            builder: (_) {
-              return AlertDialog(
-                title: Text("編集"),
-                content: TextField(),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Cancel"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  FlatButton(
-                    child: Text("更新"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              );
-            },
-          );
+        onLongPress: () {
+          edit(index, title);
         },
 
         // trailing: Icon(Icons.check_box_outline_blank),

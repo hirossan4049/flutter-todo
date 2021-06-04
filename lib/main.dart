@@ -56,11 +56,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // return HomeWidget();
     return Scaffold(
-      appBar: AppBar(
-          // title: Text(widget.title),
-          ),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40.0),
+        child: AppBar(
+          title: Text('Flutter todo!?'),
+        ),
+      ),
       body: Center(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
@@ -129,16 +131,38 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       },
       child: ListTile(
-        title: Text("$title"),
-        // editing
-        //     ? TextField(controller: _textEditingController, onChanged: null)
-        //     : Text("$title"),
+        title: editing
+            ? TextField(controller: _textEditingController, onChanged: null)
+            : Text("$title"),
         onTap: () {
           print("row clicked");
           setState(() {
             editing = true;
           });
         },
+
+        onLongPress: (){
+          showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: Text("編集"),
+                content: TextField(),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Cancel"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  FlatButton(
+                    child: Text("更新"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+
         // trailing: Icon(Icons.check_box_outline_blank),
         leading: ConstrainedBox(
             constraints: BoxConstraints(
@@ -147,11 +171,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-
     Widget titleWidget() {
-      if (editing){ return TextField(controller: _textEditingController, onChanged: null); }
-      else { return Text("$title"); }
+      if (editing) {
+        return TextField(controller: _textEditingController, onChanged: null);
+      } else {
+        return Text("$title");
+      }
     }
-
   }
 }

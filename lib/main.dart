@@ -32,7 +32,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String _text = "";
   var _controller = TextEditingController();
   var listViewKey = Key("listView");
-  List<Color> colorList = [Colors.cyan, Colors.deepOrange, Colors.indigo];
   List<String> lists = ["hello", "world", "hey"];
 
   void _incrementCounter() {
@@ -109,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     bool editing = false;
 
     return Dismissible(
-      key: Key("$index"),
+      key: UniqueKey(),
       background: Container(color: Colors.red),
       // start to endの背景
       secondaryBackground: Container(color: Colors.yellow),
